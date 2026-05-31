@@ -530,6 +530,37 @@
         let isAdmin = sessionStorage.getItem('isAdminRonda') === 'true';
 
         // --- UTILITAS & ANIMASI ---
+        window.navigate = function(pageId) {
+            const pages = ['home', 'jadwal', 'absen', 'laporan', 'warga'];
+            pages.forEach(p => {
+                // Sembunyikan semua halaman
+                const pageEl = document.getElementById('page-' + p);
+                if (pageEl) pageEl.classList.add('hidden');
+                
+                // Reset warna ikon navigasi (kecuali tombol absen di tengah)
+                const navItem = document.getElementById('nav-' + p);
+                if(navItem && p !== 'absen') {
+                    navItem.classList.remove('text-blue-400');
+                    navItem.classList.add('text-gray-500');
+                }
+            });
+
+            // Tampilkan halaman yang dipilih
+            const targetPage = document.getElementById('page-' + pageId);
+            if (targetPage) targetPage.classList.remove('hidden');
+            
+            // Beri warna biru pada ikon navigasi yang aktif
+            const activeNav = document.getElementById('nav-' + pageId);
+            if(activeNav && pageId !== 'absen') {
+                activeNav.classList.remove('text-gray-500');
+                activeNav.classList.add('text-blue-400');
+            }
+            
+            // Gulir kembali ke atas layar setiap ganti menu
+            const mainArea = document.getElementById('mainContentArea');
+            if(mainArea) mainArea.scrollTo(0,0);
+        };
+
         function toLocalISODate(d) {
             const z = n => ('0' + n).slice(-2);
             return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate());
@@ -737,28 +768,6 @@
         function updateUI() {
             renderHomeData(); renderSchedule(); renderWargaList(); renderReguList(); renderLaporanList(); renderAbsenPage();
         }
-
-        // --- NAVIGASI UI ---
-        window.navigate = function(pageId) {
-            const pages = ['home', 'jadwal', 'absen', 'laporan', 'warga'];
-            pages.forEach(p => {
-                document.getElementById('page-' + p).classList.add('hidden');
-                const navItem = document.getElementById('nav-' + p);
-                if(navItem && p !== 'absen') {
-                    navItem.classList.remove('text-blue-400'); navItem.classList.add('text-gray-500');
-                    navItem.querySelector('div').classList.remove('scale-100');
-                    navItem.querySelector('div').classList.add('scale-0');
-                }
-            });
-            document.getElementById('page-' + pageId).classList.remove('hidden');
-            const activeNav = document.getElementById('nav-' + pageId);
-            if(activeNav && pageId !== 'absen') {
-                activeNav.classList.remove('text-gray-500'); activeNav.classList.add('text-blue-400');
-                activeNav.querySelector('div').classList.remove('scale-0');
-                activeNav.querySelector('div').classList.add('scale-100');
-            }
-            document.getElementById('mainContentArea').scrollTo(0,0);
-        };
 
         // --- LOGIKA JADWAL REGU ---
         function getReguForDate(dateObj) {
